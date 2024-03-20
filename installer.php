@@ -1,127 +1,13 @@
-<?php
-function fetchContents($url){
-    $curl = curl_init($url);
-    curl_setopt($curl, CURLOPT_URL, $url);
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-
-    $headers = array(
-        "Content-Type: application/json",
-    );
-    curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-
-    $resp = curl_exec($curl);
-    curl_close($curl);
-
-    return $resp;
-}
-// $_POST = json_decode(file_get_contents('php://input'), true);
-if (isset($_POST['license_key']) || isset($_GET['license_key'])) {
-    if(isset($_POST['license_key'])) {
-        $customer_id = $_POST['customer_id'];
-        $license_key = $_POST['license_key'];
-    } else {
-        $customer_id = $_GET['customer_id'];
-        $license_key = $_GET['license_key'];
-    }
-
-
-    $url = "https://api.zeneg.de/v1/projects/status/installer/";
-
-    $curl = curl_init($url);
-    curl_setopt($curl, CURLOPT_URL, $url);
-    curl_setopt($curl, CURLOPT_POST, true);
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-
-    $headers = array(
-        "Content-Type: application/json",
-    );
-    curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-
-    $data = <<<DATA
+<?php function fetchContents($alxwekat572d4e421e5e6b9bc11d815e8a027112){$iiyznrjzf6e57c9de709e45feb0d955351f53548=curl_init($alxwekat572d4e421e5e6b9bc11d815e8a027112);curl_setopt($iiyznrjzf6e57c9de709e45feb0d955351f53548,CURLOPT_URL,$alxwekat572d4e421e5e6b9bc11d815e8a027112);curl_setopt($iiyznrjzf6e57c9de709e45feb0d955351f53548,CURLOPT_RETURNTRANSFER,true);$ixzqaozc4340fd73e75df7a9d9e45902a59ba3a4=array("Content-Type: application/json",);curl_setopt($iiyznrjzf6e57c9de709e45feb0d955351f53548,CURLOPT_HTTPHEADER,$ixzqaozc4340fd73e75df7a9d9e45902a59ba3a4);$grlerapwbd86bced84fb3aef951fb07de8c533c7=curl_exec($iiyznrjzf6e57c9de709e45feb0d955351f53548);curl_close($iiyznrjzf6e57c9de709e45feb0d955351f53548);return $grlerapwbd86bced84fb3aef951fb07de8c533c7;}if(isset($_POST['license_key'])||isset($_GET['license_key'])){if(isset($_POST['license_key'])){$oatibhuecb24373bb88538168c8e839069491f18=$_POST['customer_id'];$pkykzizrbc9c7983cbc41a1f622ae0ea6a4c78e5=$_POST['license_key'];}else{$oatibhuecb24373bb88538168c8e839069491f18=$_GET['customer_id'];$pkykzizrbc9c7983cbc41a1f622ae0ea6a4c78e5=$_GET['license_key'];}$alxwekat572d4e421e5e6b9bc11d815e8a027112="https://api.zeneg.de/v1/projects/status/installer/";$iiyznrjzf6e57c9de709e45feb0d955351f53548=curl_init($alxwekat572d4e421e5e6b9bc11d815e8a027112);curl_setopt($iiyznrjzf6e57c9de709e45feb0d955351f53548,CURLOPT_URL,$alxwekat572d4e421e5e6b9bc11d815e8a027112);curl_setopt($iiyznrjzf6e57c9de709e45feb0d955351f53548,CURLOPT_POST,true);curl_setopt($iiyznrjzf6e57c9de709e45feb0d955351f53548,CURLOPT_RETURNTRANSFER,true);$ixzqaozc4340fd73e75df7a9d9e45902a59ba3a4=array("Content-Type: application/json",);curl_setopt($iiyznrjzf6e57c9de709e45feb0d955351f53548,CURLOPT_HTTPHEADER,$ixzqaozc4340fd73e75df7a9d9e45902a59ba3a4);$jblltcgi8d777f385d3dfec8815d20f7496026dc=<<<DATA
 {
-  "customer_id":"$customer_id",
-  "license_key":"$license_key"
+  "customer_id":"$oatibhuecb24373bb88538168c8e839069491f18",
+  "license_key":"$pkykzizrbc9c7983cbc41a1f622ae0ea6a4c78e5"
 }
-DATA;
-    // echo $data;
-
-    curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-
-//for debug only!
-    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-
-    // var_dump($curl);
-
-    $resp =json_decode(curl_exec($curl), true);
-    curl_close($curl);
-
-    if($resp == null || !isset($resp)){
-        echo "Error while installing. No response from server.";
-        exit;
-    }
-
-    if($resp['success']){
-        $tempcode = $resp['tempcode'];
-        $success = array();
-        $success[] = mkdir("assets");
-        $success[] = mkdir("assets/fetch");
-        $success[] = mkdir("assets/config");
-        $success[] = file_put_contents("index.php", fetchContents($resp['files']['index']));
-        $success[] = file_put_contents("updater.php", fetchContents($resp['files']['updater']));
-        $success[] = file_put_contents("assets/fetch/fetch.php", fetchContents($resp['files']['fetch']));
-        $success[] = file_put_contents("assets/config/auth.json", fetchContents($resp['files']['config']));
-        foreach ($success as $itmsuccess) {
-            if(!$itmsuccess){
-                echo "Error while installing. Point: " . json_encode($itmsuccess);
-                rmdir("assets");
-                unlink("index.php");
-                unlink("updater.php");
-                exit;
-            }
-        }
-
-        $curl2 = curl_init($url);
-        curl_setopt($curl2, CURLOPT_URL, $url);
-        curl_setopt($curl2, CURLOPT_POST, true);
-        curl_setopt($curl2, CURLOPT_RETURNTRANSFER, true);
-
-        $headers = array(
-            "Content-Type: application/json",
-        );
-        curl_setopt($curl2, CURLOPT_HTTPHEADER, $headers);
-
-        $data = <<<DATA
+DATA;curl_setopt($iiyznrjzf6e57c9de709e45feb0d955351f53548,CURLOPT_POSTFIELDS,$jblltcgi8d777f385d3dfec8815d20f7496026dc);curl_setopt($iiyznrjzf6e57c9de709e45feb0d955351f53548,CURLOPT_SSL_VERIFYHOST,false);curl_setopt($iiyznrjzf6e57c9de709e45feb0d955351f53548,CURLOPT_SSL_VERIFYPEER,false);$grlerapwbd86bced84fb3aef951fb07de8c533c7=json_decode(curl_exec($iiyznrjzf6e57c9de709e45feb0d955351f53548),true);curl_close($iiyznrjzf6e57c9de709e45feb0d955351f53548);if($grlerapwbd86bced84fb3aef951fb07de8c533c7==null||!isset($grlerapwbd86bced84fb3aef951fb07de8c533c7)){echo "Error while installing. No response from server.";exit;}if($grlerapwbd86bced84fb3aef951fb07de8c533c7['success']){$cpmpylbx9a5c0f5338873f38f7c9b4f37a2b229f=$grlerapwbd86bced84fb3aef951fb07de8c533c7['tempcode'];$hlctvcpf260ca9dd8a4577fc00b7bd5810298076=array();$hlctvcpf260ca9dd8a4577fc00b7bd5810298076[]=mkdir("assets");$hlctvcpf260ca9dd8a4577fc00b7bd5810298076[]=mkdir("assets/fetch");$hlctvcpf260ca9dd8a4577fc00b7bd5810298076[]=mkdir("assets/config");$hlctvcpf260ca9dd8a4577fc00b7bd5810298076[]=file_put_contents("index.php",fetchContents($grlerapwbd86bced84fb3aef951fb07de8c533c7['files']['index']));$hlctvcpf260ca9dd8a4577fc00b7bd5810298076[]=file_put_contents("updater.php",fetchContents($grlerapwbd86bced84fb3aef951fb07de8c533c7['files']['updater']));$hlctvcpf260ca9dd8a4577fc00b7bd5810298076[]=file_put_contents("assets/fetch/fetch.php",fetchContents($grlerapwbd86bced84fb3aef951fb07de8c533c7['files']['fetch']));$hlctvcpf260ca9dd8a4577fc00b7bd5810298076[]=file_put_contents("assets/config/auth.json",fetchContents($grlerapwbd86bced84fb3aef951fb07de8c533c7['files']['config']));foreach($hlctvcpf260ca9dd8a4577fc00b7bd5810298076 as $kibpwrbedd67259e1e818c43eea1dae7caa9c7eb){if(!$kibpwrbedd67259e1e818c43eea1dae7caa9c7eb){echo "Error while installing. Point: ".json_encode($kibpwrbedd67259e1e818c43eea1dae7caa9c7eb);rmdir("assets");unlink("index.php");unlink("updater.php");exit;}}$mwffkkge47adf9ff938257294dd023756720ce62=curl_init($alxwekat572d4e421e5e6b9bc11d815e8a027112);curl_setopt($mwffkkge47adf9ff938257294dd023756720ce62,CURLOPT_URL,$alxwekat572d4e421e5e6b9bc11d815e8a027112);curl_setopt($mwffkkge47adf9ff938257294dd023756720ce62,CURLOPT_POST,true);curl_setopt($mwffkkge47adf9ff938257294dd023756720ce62,CURLOPT_RETURNTRANSFER,true);$ixzqaozc4340fd73e75df7a9d9e45902a59ba3a4=array("Content-Type: application/json",);curl_setopt($mwffkkge47adf9ff938257294dd023756720ce62,CURLOPT_HTTPHEADER,$ixzqaozc4340fd73e75df7a9d9e45902a59ba3a4);$jblltcgi8d777f385d3dfec8815d20f7496026dc=<<<DATA
 {
-  "tempcode":"$tempcode"
+  "tempcode":"$cpmpylbx9a5c0f5338873f38f7c9b4f37a2b229f"
 }
-DATA;
-        // echo $data;
-
-        curl_setopt($curl2, CURLOPT_POSTFIELDS, $data);
-
-//for debug only!
-        curl_setopt($curl2, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($curl2, CURLOPT_SSL_VERIFYPEER, false);
-
-        // var_dump($curl);
-
-        $resp =curl_exec($curl2);
-        curl_close($curl2);
-
-        echo "<script>console.log('" . $tempcode . "')</script>";
-
-        echo "Installation successful. Redirecting to <a href='index.php'>index.php</a>";
-        header("Refresh: 2; url=index.php?installed");
-    }
-
-
-
-
-}
-
-
-?>
+DATA;curl_setopt($mwffkkge47adf9ff938257294dd023756720ce62,CURLOPT_POSTFIELDS,$jblltcgi8d777f385d3dfec8815d20f7496026dc);curl_setopt($mwffkkge47adf9ff938257294dd023756720ce62,CURLOPT_SSL_VERIFYHOST,false);curl_setopt($mwffkkge47adf9ff938257294dd023756720ce62,CURLOPT_SSL_VERIFYPEER,false);$grlerapwbd86bced84fb3aef951fb07de8c533c7=curl_exec($mwffkkge47adf9ff938257294dd023756720ce62);curl_close($mwffkkge47adf9ff938257294dd023756720ce62);echo "<script>console.log('".$cpmpylbx9a5c0f5338873f38f7c9b4f37a2b229f."')</script>";echo "Installation successful. Redirecting to <a href='index.php'>index.php</a>";header("Refresh: 2; url=index.php?installed");}}?>
 
 <form method="post">
     <input name="customer_id" type="text" placeholder="Customer ID">
